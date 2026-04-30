@@ -1,0 +1,82 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background-color: #f6f8fa;
+    color: #24292e;
+    margin: 0;
+    padding: 20px;
+}
+
+header { text-align: center; margin-bottom: 2rem; }
+
+#editor-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#gui-interface, #output-interface {
+    background: white;
+    padding: 20px;
+    border: 1px solid #d1d5da;
+    border-radius: 8px;
+    min-height: 500px;
+}
+
+.output-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.step-item {
+    background: #f8f9fa;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    position: relative;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #d1d5da;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#yaml-preview {
+    background: #1b1f23;
+    color: #e1e4e8;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+button {
+    background-color: #2ea44f;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#download-btn { background-color: #0366d6; }
+.remove-btn { background-color: #cf222e; margin-top: 10px; }
+
+.help-box {
+    margin-top: 15px;
+    font-size: 12px;
+    background: #fffbdd;
+    padding: 10px;
+    border: 1px solid #d4a72c;
+    border-radius: 4px;
+}

@@ -1,14 +1,51 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub YAML Builder</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-  
-</body>
+    <header>
+        <h1>GitHub YAML Builder</h1>
+        <p>Build workflows and issue forms easily with a GUI!</p>
+    </header>
 
+    <main>
+        <section class="selection-area">
+            <label for="yaml-type">Type:</label>
+            <select id="yaml-type">
+                <option value="none">-- Choose Type --</option>
+                <option value="workflow">GitHub Workflow (.yml)</option>
+                <option value="issue-form">Issue Template (Form)</option>
+            </select>
+        </section>
+
+        <hr>
+
+        <div id="editor-container">
+            <div id="gui-interface">
+                <p class="placeholder-text">Please select a type above to start building.</p>
+            </div>
+
+            <div id="output-interface">
+                <div class="output-header">
+                    <h3>YAML Output</h3>
+                    <div class="button-group">
+                        <button id="copy-btn">Copy</button>
+                        <button id="download-btn">Download .yml</button>
+                    </div>
+                </div>
+                <pre id="yaml-preview"># Your YAML will appear here...</pre>
+                <div class="help-box">
+                    <strong>Placement:</strong><br>
+                    <span id="help-text">Select a type to see where to save this file.</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
 </html>
