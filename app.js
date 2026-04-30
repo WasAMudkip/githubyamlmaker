@@ -3,47 +3,49 @@ const guiInterface = document.getElementById('gui-interface');
 const yamlPreview = document.getElementById('yaml-preview');
 const helpText = document.getElementById('help-text');
 
-yamlTypeSelect.addEventListener('change', (e) => {
-    renderGUI(e.target.value);
-});
+yamlTypeSelect.addEventListener('change', (e) => renderGUI(e.target.value));
 
 function renderGUI(type) {
     if (type === 'workflow') {
-        helpText.innerHTML = "Save in: <code>.github/workflows/main.yml</code>";
+        helpText.innerText = ".github/workflows/main.yml";
         guiInterface.innerHTML = `
-            <h2>Workflow Builder</h2>
-            <label>Workflow Name:</label>
-            <input type="text" id="wf-name" placeholder="CI Pipeline" oninput="updateWorkflow()">
-            <div id="steps-container"><h3>Tasks</h3></div>
-            <button onclick="addWorkflowStep()">+ Add New Task</button>
+            <div class="card-header"><strong>Workflow Editor</strong></div>
+            <div class="card-body">
+                <label>Workflow Name</label>
+                <input type="text" id="wf-name" class="gh-input" placeholder="CI" oninput="updateWorkflow()">
+                <div id="steps-container"></div>
+                <button class="gh-btn" style="width:100%" onclick="addWorkflowStep()">+ Add Step</button>
+            </div>
         `;
         addWorkflowStep();
     } else if (type === 'issue-form') {
-        helpText.innerHTML = "Save in: <code>.github/ISSUE_TEMPLATE/report.yml</code>";
+        helpText.innerText = ".github/ISSUE_TEMPLATE/report.yml";
         guiInterface.innerHTML = `
-            <h2>Issue Form Builder</h2>
-            <input type="text" id="issue-name" placeholder="Bug Report" oninput="updateIssueForm()">
-            <input type="text" id="issue-desc" placeholder="Describe the template purpose" oninput="updateIssueForm()">
-            <div id="elements-container"><h3>Form Elements</h3></div>
-            <div class="button-group">
-                <button onclick="addFormElement('textarea')">+ Textarea</button>
-                <button onclick="addFormElement('input')">+ Input</button>
-                <button onclick="addFormElement('checkboxes')">+ Checkboxes</button>
+            <div class="card-header"><strong>Form Editor</strong></div>
+            <div class="card-body">
+                <input type="text" id="form-name" class="gh-input" placeholder="Form Name" oninput="updateIssueForm()">
+                <input type="text" id="form-desc" class="gh-input" placeholder="Description" oninput="updateIssueForm()">
+                <div id="elements-container"></div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
+                    <button class="gh-btn" onclick="addFormElement('textarea')">Textarea</button>
+                    <button class="gh-btn" onclick="addFormElement('input')">Input</button>
+                    <button class="gh-btn" onclick="addFormElement('checkboxes')">Checks</button>
+                </div>
             </div>
         `;
         updateIssueForm();
     }
 }
 
-// --- Workflow Logic ---
+// --- Workflow Functions ---
 function addWorkflowStep() {
     const container = document.getElementById('steps-container');
     const div = document.createElement('div');
     div.className = 'step-item';
     div.innerHTML = `
-        <input type="text" placeholder="Task Name" class="step-name" oninput="updateWorkflow()">
-        <textarea placeholder="Shell Code (e.g. npm run build)" class="step-run" oninput="updateWorkflow()"></textarea>
-        <button class="remove-btn" onclick="this.parentElement.remove(); updateWorkflow();">Delete</button>
+        <div class="step-top"><strong>Step</strong><button class="gh-btn-danger" onclick="this.parentElement.parentElement.remove(); updateWorkflow();">Delete</button></div>
+        <input type="text" class="gh-input step-name" placeholder="Name" oninput="updateWorkflow()">
+        <textarea class="gh-input step-run" placeholder="Run command" oninput="updateWorkflow()"></textarea>
     `;
     container.appendChild(div);
     updateWorkflow();
@@ -52,67 +54,56 @@ function addWorkflowStep() {
 function updateWorkflow() {
     const name = document.getElementById('wf-name').value || 'Workflow';
     let yaml = [`name: ${name}`, `on: [push]`, `jobs:`, `  build:`, `    runs-on: ubuntu-latest`, `    steps:`];
-    
-    document.querySelectorAll('#steps-container .step-item').forEach(el => {
+    document.querySelectorAll('.step-item').forEach(el => {
         const sName = el.querySelector('.step-name').value || 'Step';
-        const sRun = el.querySelector('.step-run').value || 'echo "Hello"';
-        yaml.push(`      - name: ${sName}`, `        run: |`, `          ${sRun.replace(/\n/g, '\n          ')}`);
+        const sRun = el.querySelector('.step-run').value || 'echo "hello"';
+        yaml.push(`      - name: ${sName}`, `        run: ${sRun}`);
     });
     yamlPreview.textContent = yaml.join('\n');
 }
 
-// --- Issue Form Logic ---
+// --- Issue Form Functions ---
 function addFormElement(type) {
     const container = document.getElementById('elements-container');
     const div = document.createElement('div');
     div.className = 'step-item';
     div.dataset.type = type;
     div.innerHTML = `
-        <strong>${type.toUpperCase()}</strong>
-        <input type="text" placeholder="ID (e.g. bug-desc)" class="el-id" oninput="updateIssueForm()">
-        <input type="text" placeholder="Label" class="el-label" oninput="updateIssueForm()">
-        ${type === 'checkboxes' ? '<textarea placeholder="Options (one per line)" class="el-opts" oninput="updateIssueForm()"></textarea>' : ''}
-        <label><input type="checkbox" class="el-req" onchange="updateIssueForm()"> Required?</label>
-        <button class="remove-btn" onclick="this.parentElement.remove(); updateIssueForm();">Delete</button>
+        <div class="step-top"><strong>${type.toUpperCase()}</strong><button class="gh-btn-danger" onclick="this.parentElement.parentElement.remove(); updateIssueForm();">Delete</button></div>
+        <input type="text" class="gh-input el-id" placeholder="ID" oninput="updateIssueForm()">
+        <input type="text" class="gh-input el-label" placeholder="Label" oninput="updateIssueForm()">
+        ${type === 'checkboxes' ? '<textarea class="gh-input el-opts" placeholder="Options" oninput="updateIssueForm()"></textarea>' : ''}
     `;
     container.appendChild(div);
     updateIssueForm();
 }
 
 function updateIssueForm() {
-    const name = document.getElementById('issue-name').value || 'Report';
-    const desc = document.getElementById('issue-desc').value || 'Description';
+    const name = document.getElementById('form-name').value || 'Report';
+    const desc = document.getElementById('form-desc').value || 'Description';
     let yaml = [`name: ${name}`, `description: ${desc}`, `body:`];
-
+    
     document.querySelectorAll('#elements-container .step-item').forEach(el => {
         const type = el.dataset.type;
-        const id = el.querySelector('.el-id').value || 'field-id';
-        const label = el.querySelector('.el-label').value || 'Label';
-        const isReq = el.querySelector('.el-req').checked;
-
-        yaml.push(`  - id: ${id}`, `    type: ${type}`, `    attributes:`, `      label: "${label}"`);
+        yaml.push(`  - type: ${type}`, `    id: ${el.querySelector('.el-id').value || 'id'}`, `    attributes:`, `      label: "${el.querySelector('.el-label').value || 'Label'}"`);
         if (type === 'checkboxes') {
             yaml.push(`      options:`);
-            el.querySelector('.el-opts').value.split('\n').forEach(opt => {
-                if(opt) yaml.push(`        - label: "${opt}"`, `          required: ${isReq}`);
-            });
-        } else {
-            yaml.push(`    validations:`, `      required: ${isReq}`);
+            el.querySelector('.el-opts').value.split('\n').forEach(opt => opt && yaml.push(`        - label: "${opt}"`));
         }
     });
     yamlPreview.textContent = yaml.join('\n');
 }
 
-// --- Utils ---
-document.getElementById('copy-btn').addEventListener('click', () => {
+// Global actions
+document.getElementById('copy-btn').onclick = () => {
     navigator.clipboard.writeText(yamlPreview.textContent);
-    alert("Copied!");
-});
+    alert('Copied!');
+};
 
-document.getElementById('download-btn').addEventListener('click', () => {
+document.getElementById('download-btn').onclick = () => {
     const blob = new Blob([yamlPreview.textContent], { type: 'text/yaml' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = document.getElementById('yaml-type').value + ".yml";
+    a.download = "github-config.yml";
     a.click();
-});
+};
